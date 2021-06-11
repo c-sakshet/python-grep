@@ -1,1 +1,3 @@
-# python-grep
+Usage:
+
+python ./find.py <searchTerm> <fileName>
