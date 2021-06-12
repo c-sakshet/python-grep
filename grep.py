@@ -20,10 +20,10 @@ def getUserInput():
 
     list_of_files = []
     if not(os.path.isdir(sys.argv[2])):
-        if not(os.path.isfile(sys.argv[2])):
+        if (os.path.isfile(sys.argv[2])):
             list_of_files.append(sys.argv[2]) #file entered by user
         else:
-            return []
+            return 0, 0
     else:
         list_of_files = getListOfFiles(sys.argv[2])
     return keyword, list_of_files
@@ -77,11 +77,11 @@ def main():
 
     
     search_term, list_of_files_obtained = getUserInput()
-    if not(search_term):
+    if (search_term != 0):
         keyword_lines = findKeyword(search_term, list_of_files_obtained)
     else:
         return
-        
+
     if not keyword_lines:
         print("The search string does not exist in the given file", sys.argv[2])
         return
