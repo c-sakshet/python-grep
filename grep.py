@@ -20,9 +20,6 @@ def create_re_keyword(keyword):
     re_keyword = re.compile(regex, flags = re.IGNORECASE)
     return re_keyword
 
-import os
-
-
 def get_parsed_files(dir_name):
     '''
     This function recursively parses all files and directories in the given directory\
