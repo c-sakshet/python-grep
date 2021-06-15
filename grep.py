@@ -1,14 +1,27 @@
 import sys, re, os
 
 def get_user_input():
-    search_term = sys.argv[1] #key word entered by user to search for in the file/s
-    input_file = sys.argv[2]
+    try:
+        search_term = sys.argv[1] #key word entered by user to search for in the file/s
+        input_file = sys.argv[2]
+    except:
+        raise SystemExit("An unexpected error occurred. Please follow the usage: \n\
+        Linux: python3 ./find.py <search keyword> <file name> \n\
+        Windows: py ./find.py <search keyword> <file name>\n\
+        \
+        \nNote: If searching for special characters like [!,@,#,$,%,^,&] or similar,\
+        \nplease use quotes to denote the string.\n\
+        E.g.: py ./find.py \"python project\" <file name>\
+        ")
     return search_term, input_file
 
 def create_re_keyword(keyword):
     regex = "(" + keyword + ")"
     re_keyword = re.compile(regex, flags = re.IGNORECASE)
     return re_keyword
+
+import os
+
 
 def get_parsed_files(dir_name):
     '''
@@ -17,10 +30,15 @@ def get_parsed_files(dir_name):
     '''
     # print("Inside get parsed files")
     parsed_files = list()
-    ''' 
-    code for traversing to be added
-    '''
-    return parsed_files.append(dir_name)
+    input_path = '{}'.format(dir_name)
+
+    for root_dir, dirs, files_in_dirs  in os.walk(input_path, topdown=True):
+        for item in files_in_dirs:
+            parsed_files.append((os.path.join(root_dir, item)))
+        for item in dirs:
+            parsed_files.append((os.path.join(root_dir, item)))
+
+    return parsed_files
 
 def check_file_type(dir_name):
     ''' This function checks if input is a file or directory'''
@@ -30,7 +48,7 @@ def check_file_type(dir_name):
         if (os.path.isfile(dir_name)):
             flag = 0            
         else:
-            raise Exception("No such file or directory.")
+            raise SystemExit("No such file or directory.")
     else:
         flag = 1       
 
@@ -76,31 +94,16 @@ def find_keyword(search_term, input_file):
                         found_at_line.append((current_file, line_number, line_read.strip('\n'))) # strip new line char at end of line
                             # To Strip right spaces use the following code instead of the above line
                             # found_at_line.append((line_number, line_read.rstrip()))
-    except FileNotFoundError as file_not_found:
-        raise Exception("Exception", sys.exc_info()[1],"orrurred.")
     except:
-        raise Exception("Exception", sys.exc_info()[1],"orrurred.")
+        raise SystemExit("Exception", sys.exc_info()[1],"orrurred.")
     finally:
         return found_at_line
 
 def print_output(keyword_lines):
-    print ("File\t\tLine\tContent\t")
     for entry in keyword_lines:
-        print("{}\t\t[{}]\t{}" .format(entry[0], entry[1], entry[2]))
+        print("    {}   [{}]    {}" .format(entry[0], entry[1], entry[2]))
 
 def main():
-    if len(sys.argv) < 3:
-        # print(sys.argv[1:])
-        print("An unexpected error occurred. Please follow the usage: \n\
-        Linux: python3 ./find.py <search keyword> <file name> \n\
-        Windows: py ./find.py <search keyword> <file name>\n\
-        \
-        \nNote: If searching for special characters like [!,@,#,$,%,^,&] or similar,\
-        \nplease use quotes to denote the string.\n\
-        E.g.: py ./find.py \"python project\" <file name>\
-            ")
-        exit(0)
-
     '''
     To Do:
     - Support CLI special character input - & without quotes.
